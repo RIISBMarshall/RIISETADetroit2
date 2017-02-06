@@ -18,54 +18,48 @@ import android.widget.Toolbar;
 
 import riis.etadetroit.adapters.CompanyListAdapter;
 import riis.etadetroit.R;
-import riis.etadetroit.controller.Controller;
+import riis.etadetroit.interfaces.MainContract;
+import riis.etadetroit.presenter.MainActivityPresenter;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MainContract.MainView {
 
     private Menu menu;
     private boolean isListView;
     private StaggeredGridLayoutManager mStaggeredLayoutManager;
     private Toolbar toolbar;
+    private MainActivityPresenter mainActivityPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivityPresenter = new MainActivityPresenter(this);
         setContentView(R.layout.activity_main);
-
-        final Controller aController = (Controller) getApplicationContext();
-
-        isListView = true;
-
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        mStaggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mStaggeredLayoutManager);
-        CompanyListAdapter mAdapter = new CompanyListAdapter(this, aController);
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(onItemClickListener);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setUpRecyclerView();
         setUpActionBar();
     }
 
-    private final CompanyListAdapter.OnItemClickListener onItemClickListener = new CompanyListAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View v, int position) {
-            Intent intent = new Intent(MainActivity.this, CompanyDetailsActivity.class);
-            intent.putExtra(CompanyDetailsActivity.EXTRA_PARAM_ID, position);
-            //startActivity(intent);
-            ImageView busImage = (ImageView) v.findViewById(R.id.busImage);
-            LinearLayout busNameHolder = (LinearLayout) v.findViewById(R.id.busNameHolder);
+    private final CompanyListAdapter.OnItemClickListener onItemClickListener =
+            new CompanyListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    Intent intent = new Intent(MainActivity.this, CompanyDetailsActivity.class);
+                    intent.putExtra(CompanyDetailsActivity.EXTRA_PARAM_ID, position);
+                    //startActivity(intent);
+                    ImageView busImage = (ImageView) v.findViewById(R.id.busImage);
+                    LinearLayout busNameHolder = (LinearLayout) v.findViewById(R.id.busNameHolder);
 
 
-            Pair<View, String> imagePair = Pair.create((View) busImage, "tImage");
-            Pair<View, String> holderPair = Pair.create((View) busNameHolder, "tNameHolder");
+                    Pair<View, String> imagePair = Pair.create((View) busImage, "tImage");
+                    Pair<View, String> holderPair = Pair.create((View) busNameHolder, "tNameHolder");
 
 
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
-                    imagePair, holderPair);
-            ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
-        }
-    };
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                                    imagePair, holderPair);
+                    ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
+                }
+            };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,7 +80,18 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setUpActionBar() {
+    public void setUpRecyclerView() {
+        isListView = true;
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mStaggeredLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mStaggeredLayoutManager);
+        CompanyListAdapter mAdapter = new CompanyListAdapter(this, mainActivityPresenter);
+        mAdapter.setOnItemClickListener(onItemClickListener);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void setUpActionBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setActionBar(toolbar);
             getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -95,7 +100,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void toggle() {
+    public void toggle() {
         MenuItem item = menu.findItem(R.id.action_toggle);
         if (isListView) {
             mStaggeredLayoutManager.setSpanCount(2);

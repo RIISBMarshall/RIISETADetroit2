@@ -1,26 +1,22 @@
-package riis.etadetroit.controller;
+package riis.etadetroit.presenter;
 
-import android.app.Application;
 import android.content.Context;
 import android.database.Cursor;
 
+import riis.etadetroit.interfaces.CompanyDetailsContract;
 import riis.etadetroit.model.CompanyData;
 import riis.etadetroit.model.ETADetroitDatabaseHelper;
 
 /**
- * Created by bmarshall on 1/31/17.
+ * Created by bmarshall on 2/6/17.
  */
 
-public class Controller extends Application {
+public class CompanyDetailsPresenter implements CompanyDetailsContract.CompanyDetailsPresenter {
+
     private ETADetroitDatabaseHelper eTADetroitDatabaseHelper;
 
-    @Override
-    public void onCreate() {
-        eTADetroitDatabaseHelper = new ETADetroitDatabaseHelper(this);
-    }
-
-    public int getCompanyListSize() {
-        return eTADetroitDatabaseHelper.getCompanyNames().getCount();
+    public CompanyDetailsPresenter(Context context){
+        eTADetroitDatabaseHelper = new ETADetroitDatabaseHelper(context);
     }
 
     public String getCompanyName(int position) {
@@ -35,13 +31,5 @@ public class Controller extends Application {
 
     public Cursor getRoutes(String company) {
         return eTADetroitDatabaseHelper.getRoutes(company);
-    }
-
-    public Cursor getRouteDetails(String route) {
-        return eTADetroitDatabaseHelper.getRouteDetails(route);
-    }
-
-    public Cursor getRouteStops(String route_id) {
-        return eTADetroitDatabaseHelper.getRouteStops(route_id);
     }
 }

@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import riis.etadetroit.controller.Controller;
 import riis.etadetroit.R;
+import riis.etadetroit.presenter.MainActivityPresenter;
 
 /**
  * Created by bmarshall on 1/30/17.
@@ -25,12 +25,12 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
 
     private final Context mContext;
     private OnItemClickListener mItemClickListener;
-    private final Controller aController;
+    MainActivityPresenter mainActivityPresenter;
 
     // 2
-    public CompanyListAdapter(Context context, Controller aController) {
+    public CompanyListAdapter(Context context, MainActivityPresenter mainActivityPresenter) {
         this.mContext = context;
-        this.aController = aController;
+        this.mainActivityPresenter = mainActivityPresenter;
     }
 
     // 3
@@ -67,7 +67,7 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
 
     @Override
     public int getItemCount() {
-        return aController.getCompanyListSize();
+        return mainActivityPresenter.getCompanyListSize();
     }
 
     // 2
@@ -80,10 +80,10 @@ public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.
     // 3
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.placeName.setText(aController.getCompanyName(position));
-        Picasso.with(mContext).load(aController.getCompanyImageResourceId(mContext, position)).into(holder.placeImage);
+        holder.placeName.setText(mainActivityPresenter.getCompanyName(position));
+        Picasso.with(mContext).load(mainActivityPresenter.getCompanyImageResourceId(mContext, position)).into(holder.placeImage);
 
-        Bitmap photo = BitmapFactory.decodeResource(mContext.getResources(), aController.getCompanyImageResourceId(mContext, position));
+        Bitmap photo = BitmapFactory.decodeResource(mContext.getResources(), mainActivityPresenter.getCompanyImageResourceId(mContext, position));
         new Palette.Builder(photo).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette palette) {
                 int bgColor = palette.getMutedColor(mContext.getResources().getColor(android.R.color.black));

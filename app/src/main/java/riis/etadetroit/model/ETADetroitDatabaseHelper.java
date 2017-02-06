@@ -11,7 +11,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
  * Created by bmarshall on 1/31/17.
  */
 
-public class ETADetroitDatabaseHelper extends SQLiteAssetHelper {
+public class ETADetroitDatabaseHelper extends SQLiteAssetHelper{
 
     private static final String DB_NAME = "ETADetroitDatabase.db";
     private SQLiteDatabase db;

@@ -10,29 +10,31 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import riis.etadetroit.R;
-import riis.etadetroit.controller.Controller;
+import riis.etadetroit.interfaces.RouteDetailsContract;
+import riis.etadetroit.presenter.RouteDetailsPresenter;
 
-public class RouteDetailsActivity extends Activity {
+public class RouteDetailsActivity extends Activity implements RouteDetailsContract.RouteDetailsView {
 
     public static final String EXTRA_ROUTE = "route";
     private TextView routeDetails;
     private String route;
     private String routeId;
+    private RouteDetailsPresenter routeDetailsPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_details);
-        final Controller aController = (Controller) getApplicationContext();
+        routeDetailsPresenter = new RouteDetailsPresenter(this);
         Intent intent = getIntent();
         route = intent.getStringExtra(EXTRA_ROUTE);
         routeDetails = (TextView) findViewById(R.id.routeDetails);
-        getRouteDetails(aController);
-        getRouteStops(aController);
+        showRouteDetails();
+        showRouteStops();
     }
 
-    private void getRouteDetails(Controller aController) {
-        Cursor routeDetailsCursor = aController.getRouteDetails(route);
+    public void showRouteDetails() {
+        Cursor routeDetailsCursor = routeDetailsPresenter.getRouteDetails(route);
 
         if (routeDetailsCursor.moveToFirst()) {
             routeDetails.setText("ROUTE DETAILS" +
@@ -47,8 +49,8 @@ public class RouteDetailsActivity extends Activity {
         }
     }
 
-    private void getRouteStops(Controller aController) {
-        Cursor routeStopsCursor = aController.getRouteStops(routeId);
+    public void showRouteStops() {
+        Cursor routeStopsCursor = routeDetailsPresenter.getRouteStops(routeId);
 
         CursorAdapter routeStopsCursorAdapter = new SimpleCursorAdapter(this, R.layout.adapter_route_stops_cursor, routeStopsCursor, new String[]{"stop_name"},
                 new int[]{R.id.list_content}, 0);
