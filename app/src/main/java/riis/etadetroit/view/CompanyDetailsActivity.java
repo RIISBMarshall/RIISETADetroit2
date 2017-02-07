@@ -19,9 +19,10 @@ import android.widget.TextView;
 import riis.etadetroit.R;
 import riis.etadetroit.adapters.RouteCursorAdapter;
 import riis.etadetroit.adapters.TransitionAdapter;
+import riis.etadetroit.interfaces.CompanyDetailsContract;
 import riis.etadetroit.presenter.CompanyDetailsPresenter;
 
-public class CompanyDetailsActivity extends Activity {
+public class CompanyDetailsActivity extends Activity implements CompanyDetailsContract.CompanyDetailsView {
 
     public static final String EXTRA_PARAM_ID = "place_id";
     private ListView mList;
@@ -60,7 +61,7 @@ public class CompanyDetailsActivity extends Activity {
         });
     }
 
-    private void initializeAttributes(){
+    public void initializeAttributes(){
         companyDetailsPresenter = new CompanyDetailsPresenter(this);
         int companyPosition = getIntent().getIntExtra(EXTRA_PARAM_ID, 0);
         companyName = companyDetailsPresenter.getCompanyName(companyPosition);
@@ -68,25 +69,25 @@ public class CompanyDetailsActivity extends Activity {
         defaultColor = getResources().getColor(R.color.primary_dark);
     }
 
-    private void initializeViews(){
+    public void initializeViews(){
         mList = (ListView) findViewById(R.id.list);
         mImageView = (ImageView) findViewById(R.id.busImage);
         mTitle = (TextView) findViewById(R.id.textView);
         mTitleHolder = (LinearLayout) findViewById(R.id.busNameHolder);
     }
 
-    private void setUpAdapter() {
+    public void setUpAdapter() {
         routeCursor = companyDetailsPresenter.getRoutes(companyName);
         RouteCursorAdapter routeAdapter = new RouteCursorAdapter(this, routeCursor);
         mList.setAdapter(routeAdapter);
     }
 
-    private void loadBusCompany() {
+    public void loadBusCompany() {
         mTitle.setText(companyName);
         mImageView.setImageResource(companyImageResourceId);
     }
 
-    private void windowTransition() {
+    public void windowTransition() {
         getWindow().getEnterTransition().addListener(new TransitionAdapter() {
             @Override
             public void onTransitionEnd(Transition transition) {
@@ -96,7 +97,7 @@ public class CompanyDetailsActivity extends Activity {
 
     }
 
-    private void getPhoto() {
+    public void getPhoto() {
         Bitmap photo = BitmapFactory.decodeResource(getResources(), companyImageResourceId);
         colorize(photo);
     }
